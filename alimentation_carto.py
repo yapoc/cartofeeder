@@ -35,17 +35,15 @@ def load_domains_from_file (input_file):
 def _do_whois (domain, nb_done = 0):
     while nb_done < NB_MAX_TRY:
         nb_done += 1
-        try:
-            return whois.query (domain)
-        except Exception as e:
-            logger.info ("Exception {}".format (e))
-            if 'Too many requests' in str (e):
-                sleep_delay = SLEEP_TIME * nb_done
-                logger.info ("On attend {} sec et on relance!".format (sleep_delay))
-                time.sleep (sleep_delay)
-                return _do_whois (domain, nb_done)
-            else:
-                raise Exception ("Problème {}".format (e))
+        d = whois.query (domain)
+        if d:
+            return d
+        else:
+            logger.info ("Le résultat de la requête whois est vide.")
+            sleep_delay = SLEEP_TIME * nb_done
+            logger.info ("On attend {} sec et on relance!".format (sleep_delay))
+            time.sleep (sleep_delay)
+            return _do_whois (domain, nb_done)
 
 
 def get_n_parse_whois_for_domain (domain):

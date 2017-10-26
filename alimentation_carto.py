@@ -2,7 +2,7 @@
 # vi: set foldmethod=indent: set tabstop=2: set shiftwidth=2:
 import argparse
 import re
-import whois
+from whois import query, WhoisException
 import time
 import logging
 
@@ -35,10 +35,10 @@ def load_domains_from_file (input_file):
 def _do_whois (domain, nb_done = 0):
     while nb_done < NB_MAX_TRY:
         nb_done += 1
-        d = whois.query (domain)
-        if d:
+        try:
+            d = query (domain, force=1)
             return d
-        else:
+        except WhoisException:
             logger.info ("Le résultat de la requête whois est vide.")
             sleep_delay = SLEEP_TIME * nb_done
             logger.info ("On attend {} sec et on relance!".format (sleep_delay))
@@ -63,7 +63,6 @@ def get_n_parse_whois_for_domain (domain):
         result['ns'] = ','.join (data.name_servers)
     except Exception as e:
         logger.error ("{} (génériq) -> Erreur {}".format (domain, e))
-        logger.debug (data.__dict__)
         raise  Exception (e)
     return result
 

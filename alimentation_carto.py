@@ -2,7 +2,7 @@
 # vi: set foldmethod=indent: set tabstop=2: set shiftwidth=2:
 import argparse
 import re
-from whois import query, WhoisException
+from whois import query, WhoisException, TldException
 import time
 import logging
 
@@ -61,9 +61,11 @@ def get_n_parse_whois_for_domain (domain):
             result['exp_date'] = str (data.expiration_date).split (' ')[0] # ça, c'est dégueulasse...
         result['owner'] = data.registrant
         result['ns'] = ','.join (data.name_servers)
+    except TldException as e:
+        logger.error ("TLD non configuré ({}).".format (domain))
     except Exception as e:
         logger.error ("{} (génériq) -> Erreur {}".format (domain, e))
-        raise  Exception (e)
+        raise Exception (e)
     return result
 
 logger = set_logger ()

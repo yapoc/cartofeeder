@@ -44,6 +44,7 @@ def _do_whois (domain, nb_done = 0):
             logger.info ("On attend {} sec et on relance!".format (sleep_delay))
             time.sleep (sleep_delay)
             return _do_whois (domain, nb_done)
+    raise WhoisException ("Toujours rien trouvé...")
 
 
 def get_n_parse_whois_for_domain (domain):
@@ -63,6 +64,8 @@ def get_n_parse_whois_for_domain (domain):
         result['ns'] = ','.join (data.name_servers)
     except TldException as e:
         logger.error ("TLD non configuré ({}).".format (domain))
+    except WhoisException as e:
+        pass
     except Exception as e:
         logger.error ("{} (génériq) -> Erreur {}".format (domain, e))
         raise Exception (e)

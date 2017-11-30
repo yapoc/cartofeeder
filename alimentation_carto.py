@@ -68,7 +68,6 @@ def get_n_parse_whois_for_domain (domain):
         pass
     except Exception as e:
         logger.error ("{} (génériq) -> Erreur {}".format (domain, e))
-        raise Exception (e)
     return result
 
 logger = set_logger ()
